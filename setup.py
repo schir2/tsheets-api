@@ -12,9 +12,9 @@ setuptools.setup(
     description = 'TSheets API Client',
     long_description = long_description,
     long_description_content_type = 'text/markdown',
-    url = 'https://github.com/schir2/zubie-api-client',
+    url = 'https://github.com/schir2/tsheets-api',
     packages=setuptools.find_packages(),
-    keywords = 'zubie api gps',
+    keywords = 'tsheets api gps',
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
