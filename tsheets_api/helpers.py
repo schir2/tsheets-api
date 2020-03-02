@@ -2,7 +2,7 @@ import datetime
 import dateparser
 import pytz
 
-from .settings import TIMEZONE
+from tsheets_api.settings import TIMEZONE
 
 TZ = pytz.timezone(TIMEZONE)
 
