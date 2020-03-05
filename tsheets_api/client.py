@@ -1,10 +1,8 @@
-import os
 import requests
 from urllib.parse import urljoin
-from tsheets_api import helpers
 from tsheets_api import settings
 
-TOKEN = os.environ.get(settings.TSHEETS_TOKEN, None)
+TOKEN = settings.TSHEETS_TOKEN
 
 
 class RestAdapter:
