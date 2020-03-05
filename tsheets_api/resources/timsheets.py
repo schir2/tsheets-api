@@ -1,33 +1,53 @@
-from tsheets_api.helpers import to_int_list
+from functools import wraps
+
+from tsheets_api.models.timesheet import Timesheet
+from tsheets_api.resource import Resource
+from tsheets_api import field
+
+import datetime
+
 from tsheets_api.helpers import get_seven_days
 
-class Timesheet(object):
-
-    def get_by_id(self, ids):
-        """Retrieves a list of all timesheets associated with your company, with filters to narrow down the results."""
-        ids = to_int_list(ids)
-        resource = 'timesheets'
-        return self._get_pages(resource, ids=ids)
+start, end = get_seven_days()
 
 
-    def get_by_date(self, on_the_clock=None, start_date=None, end_date=None, last_modified=None,
-                              user_id=None):
-        """
-        Retrieves a list of all timesheets associated with your company, with filters to narrow down the results.
+def get_decorator(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        print(kwargs)
 
-        Defaults to on the last seven days of on the clock timesheets.
+    return wrapper
 
-        :param user_id:
-        :param on_the_clock:
-        :param start_date:
-        :param end_date:
-        :param last_modified:
-        :return:
-        """
-        if not (start_date or end_date or last_modified):
-            start_date, end_date = get_seven_days()
-            on_the_clock = True
 
-        """Retrieves a list of all timesheets associated with your company, with filters to narrow down the results."""
-        resource = 'timesheets'
-        return self._get_pages(resource, start_date=start_date, end_date=end_date, on_the_clock=on_the_clock)
+class Timesheets(Resource):
+    model = Timesheet
+    resource = 'timesheet'
+
+    ids = field.List(name='ids', required=True)
+    start_date = field.DateTime(name='start_date', required=True)
+    end_date = field.DateTime(name='start_date', required=True)
+    jobcode_ids = field.List(name='jobcode_ids')
+    payroll_ids = field.List(name='payroll_ids')
+    user_ids = field.List(name='user_ids')
+    group_ids = field.List(name='group_ids')
+    on_the_clock = field.CustomBool(name='on_the_clock', default=False)
+    jobcode_type = field.Str(name='jobcode_type')
+    modified_before = field.DateTime(name='modified_before', required=True)
+    supplemental_data = field.Bool(name='supplemental_data')
+    per_page = field.Int(name='per_page', default=50, min_value=1, max_value=50)
+    page = field.Int(name='page', default=1, min_value=1)
+
+    @classmethod
+    @get_decorator
+    def get(cls, ids=ids.default, start_date=start_date.default, end_date=end_date.default,
+            jobcode_ids=jobcode_ids.default, payroll_ids=payroll_ids.default, user_ids=user_ids.default,
+            group_ids=group_ids.default, on_the_clock=on_the_clock.default, jobcode_type=jobcode_type.default,
+            modified_before=modified_before.default, supplemental_data=supplemental_data.default,
+            per_page=per_page.default, page=page.default):
+        if not (ids or start_date or end_date or modified_before):
+            raise Exception(
+                'None of the required arguments were supplied: ids, start_date, end_date or modified_before')
+        print(cls.get.__code__.co_consts)
+
+
+Timesheets.get(start_date=5)
